@@ -26,21 +26,24 @@ images:
     newTag: latest
 
 patches:
-- target:
-    kind: Deployment
-    name: esprit-market-backend
-  patch: |-
-    - op: replace
-    path: /spec/replicas
-      value: 1
-    - path: /spec/template/spec/affinity
-      value: null
-- target:
-    kind: Deployment
-    name: esprit-market-frontend
-  patch: |-
-    - op: replace
-    path: /spec/replicas
-      value: 1
-    - path: /spec/template/spec/affinity
-      value: null
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: esprit-market-backend
+      spec:
+        replicas: 1
+        template:
+          spec:
+            affinity: null
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: esprit-market-frontend
+      spec:
+        replicas: 1
+        template:
+          spec:
+            affinity: null
