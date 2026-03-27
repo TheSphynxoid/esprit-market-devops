@@ -67,6 +67,16 @@ spec:
             capabilities:
               drop:
                 - ALL
+          volumeMounts:
+            - name: nginx-tmp
+              mountPath: /tmp/nginx
+            - name: nginx-logs
+              mountPath: /var/lib/nginx/logs
+      volumes:
+        - name: nginx-tmp
+          emptyDir: {}
+        - name: nginx-logs
+          emptyDir: {}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
