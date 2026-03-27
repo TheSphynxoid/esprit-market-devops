@@ -13,7 +13,7 @@ echo "=== Updating system ==="
 apt update && apt upgrade -y
 
 echo "=== Installing dependencies ==="
-apt install -y curl wget apt-transport-https ca-certificates gnupg lsb-release software-properties-common
+apt install -y curl wget apt-transport-https ca-certificates gnupg lsb-release software-properties-common conntrack
 
 echo "=== Disabling swap ==="
 swapoff -a
