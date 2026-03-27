@@ -12,25 +12,16 @@ images:
   - name: thesphynx2000/espritmarket-frontend
     newTag: latest
 
+commonLabels:
+  - name: esprit-market-backend
+  - name: esprit-market-frontend
+
 patches:
-  - target:
+  - path: patches/backend-patch.yaml
+    target:
       kind: Deployment
       name: esprit-market-backend
-      patch: |-
-        - op: replace
-          path: /spec/replicas
-          value: 1
-        - op: replace
-          path: /spec/template/spec/affinity
-          value: null
-
-  - target:
+  - path: patches/frontend-patch.yaml
+    target:
       kind: Deployment
       name: esprit-market-frontend
-      patch: |-
-        - op: replace
-          path: /spec/replicas
-          value: 1
-        - op: replace
-          path: /spec/template/spec/affinity
-          value: null
