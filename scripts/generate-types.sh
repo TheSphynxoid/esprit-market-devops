@@ -11,15 +11,20 @@ WORKSPACE_ROOT="$(dirname "$DEVOPS_ROOT")"
 API_TYPES_DIR="$DEVOPS_ROOT/shared/api-types"
 OPENAPI_FILE="$API_TYPES_DIR/openapi.yaml"
 
+echo "Workspace root: $WORKSPACE_ROOT"
+echo "DevOps root: $DEVOPS_ROOT"
+
 # Check if backend is running
+echo ""
 echo "Checking if backend is running..."
 if ! curl -s http://localhost:8088/actuator/health > /dev/null 2>&1; then
     echo "ERROR: Backend is not running on port 8088"
+    echo ""
     echo "Please start the backend first:"
     echo "  cd $WORKSPACE_ROOT/backend && ./mvnw spring-boot:run"
     echo ""
     echo "Or start with docker compose:"
-    echo "  docker compose -f $DEVOPS_ROOT/docker-compose.yml up -d backend"
+    echo "  docker compose -f $DEVOPS_ROOT/docker-compose.yml -f $DEVOPS_ROOT/docker-compose.dev.yml up -d backend"
     exit 1
 fi
 
@@ -38,15 +43,14 @@ if ! command -v openapi-generator-cli &> /dev/null; then
     npm install -g @openapitools/openapi-generator-cli
 fi
 
+# Ensure output directory exists
+mkdir -p "$API_TYPES_DIR/src/generated"
+
 # Generate TypeScript types
 echo ""
 echo "Generating TypeScript types..."
 cd "$API_TYPES_DIR"
 
-# Clean previous generated files
-rm -rf src/generated/*
-
-# Generate Angular-compatible TypeScript types
 openapi-generator-cli generate \
     -i "$OPENAPI_FILE" \
     -g typescript-angular \
