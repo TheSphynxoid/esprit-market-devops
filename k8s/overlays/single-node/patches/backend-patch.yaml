@@ -1,9 +1,2 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: esprit-market-backend
-spec:
-  replicas: 1
-  template:
-    spec:
-      affinity: null
+- op: replace
+- path: patches/backend-patch.yaml
