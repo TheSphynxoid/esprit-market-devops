@@ -3,22 +3,8 @@ kind: Kustomization
 
 namespace: esprit-market
 
-# Single-node deployment - no HPA/PDB, single replica
 resources:
-  - ../../namespace.yaml
-  - ../../cert-issuer.yaml
-  - ../../backend/backend-configmap.yaml
-  - ../../backend/backend-secret.yaml
-  - ../../backend/postgres.yaml
-  - ../../backend/backend-deployment.yaml
-  - ../../backend/backend-service.yaml
-  - ../../frontend/frontend-configmap.yaml
-  - ../../frontend/frontend-deployment.yaml
-  - ../../frontend/frontend-service.yaml
-  - ../../monitoring/prometheus-config.yaml
-  - ../../monitoring/prometheus.yaml
-  - ../../network-policy.yaml
-  - ../../ingress.yaml
+  - ../../
 
 images:
   - name: thesphynx2000/espritmarket-backend
@@ -26,26 +12,25 @@ images:
   - name: thesphynx2000/espritmarket-frontend
     newTag: latest
 
-# Single replica, no anti-affinity for single-node
 patches:
-  - patch: |-
-      apiVersion: apps/v1
+  - target:
       kind: Deployment
-      metadata:
-        name: esprit-market-backend
-      spec:
-        replicas: 1
-        template:
-          spec:
-            affinity: null
+      name: esprit-market-backend
+      patch: |-
+        - op: replace
+          path: /spec/replicas
+          value: 1
+        - op: replace
+          path: /spec/template/spec/affinity
+          value: null
 
-  - patch: |-
-      apiVersion: apps/v1
+  - target:
       kind: Deployment
-      metadata:
-        name: esprit-market-frontend
-      spec:
-        replicas: 1
-        template:
-          spec:
-            affinity: null
+      name: esprit-market-frontend
+      patch: |-
+        - op: replace
+          path: /spec/replicas
+          value: 1
+        - op: replace
+          path: /spec/template/spec/affinity
+          value: null
