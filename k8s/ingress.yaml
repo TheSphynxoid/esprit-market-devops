@@ -16,11 +16,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - espritmarket.local
-        - espritmarket.example.com
+        - esprit.thesphynx.net
       secretName: esprit-market-tls
   rules:
-    - host: espritmarket.local
+    - host: esprit.thesphynx.net
       http:
         paths:
           - path: /api
@@ -37,17 +36,14 @@ spec:
                 name: esprit-market-backend
                 port:
                   number: 8088
-          - path: /
+          - path: /v3/api-docs
             pathType: Prefix
             backend:
               service:
-                name: esprit-market-frontend
+                name: esprit-market-backend
                 port:
-                  number: 80
-    - host: espritmarket.example.com
-      http:
-        paths:
-          - path: /api
+                  number: 8088
+          - path: /swagger-ui
             pathType: Prefix
             backend:
               service:

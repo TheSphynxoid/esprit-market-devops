@@ -1,0 +1,52 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Single-node overlay - reduces replicas and removes anti-affinity
+
+resources:
+  - ../
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: esprit-market-backend
+        namespace: esprit-market
+      spec:
+        replicas: 1
+        template:
+          spec:
+            affinity: null
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: esprit-market-frontend
+        namespace: esprit-market
+      spec:
+        replicas: 1
+        template:
+          spec:
+            affinity: null
+
+  - patch: |-
+      apiVersion: autoscaling/v2
+      kind: HorizontalPodAutoscaler
+      metadata:
+        name: esprit-market-backend-hpa
+        namespace: esprit-market
+      spec:
+        maxReplicas: 1
+        minReplicas: 1
+
+  - patch: |-
+      apiVersion: autoscaling/v2
+      kind: HorizontalPodAutoscaler
+      metadata:
+        name: esprit-market-frontend-hpa
+        namespace: esprit-market
+      spec:
+        maxReplicas: 1
+        minReplicas: 1
