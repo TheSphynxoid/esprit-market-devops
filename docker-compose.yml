@@ -52,9 +52,10 @@ services:
     container_name: esprit-market-frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
-      - "80:80"
+      - "80:8080"
     networks:
       - backend-network
 

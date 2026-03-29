@@ -25,8 +25,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 101
-        fsGroup: 101
+        runAsUser: 1001
+        fsGroup: 1001
       containers:
         - name: frontend
           image: thesphynx2000/espritmarket-frontend:latest
@@ -35,9 +35,6 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          envFrom:
-            - configMapRef:
-                name: frontend-config
           readinessProbe:
             httpGet:
               path: /health
@@ -70,13 +67,19 @@ spec:
           volumeMounts:
             - name: nginx-tmp
               mountPath: /tmp/nginx
-            - name: nginx-logs
-              mountPath: /var/lib/nginx/logs
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
       volumes:
         - name: nginx-tmp
           emptyDir: {}
-        - name: nginx-logs
+        - name: nginx-cache
           emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: frontend-config
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
