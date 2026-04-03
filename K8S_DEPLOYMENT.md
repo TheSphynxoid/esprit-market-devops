@@ -97,7 +97,13 @@ kubectl wait --namespace ingress-nginx \
 ```bash
 # Clone repository
 git clone https://github.com/your-repo/esprit-market.git
-cd esprit-market/devops
+cd esprit-market
+
+# Setup persistent storage for image uploads (IMPORTANT!)
+sudo ./devops/scripts/setup-storage.sh
+
+# Navigate to devops directory
+cd devops
 
 # Create secrets
 ./scripts/create-secrets.sh
@@ -107,6 +113,31 @@ kubectl apply -k k8s/overlays/single-node/
 
 # Or for full deployment (multi-node)
 # kubectl apply -k k8s/
+```
+
+---
+
+## Storage Configuration
+
+The application needs persistent storage for product image uploads. The setup script automatically:
+
+1. Creates `/mnt/data/esprit-market/uploads` directory on the node
+2. Sets proper permissions for the container user (UID 1000)
+3. Updates the PersistentVolume manifest with your node's hostname
+
+**If you need to run the storage setup script later:**
+```bash
+sudo ./devops/scripts/setup-storage.sh
+```
+
+**To verify storage is working:**
+```bash
+# Check PersistentVolumeClaim is bound
+kubectl get pvc -n esprit-market
+
+# Check the pod can write to the volume
+POD=$(kubectl get pods -n esprit-market -l app=esprit-market-backend -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -it $POD -n esprit-market -- ls -la /app/uploads
 ```
 
 ---

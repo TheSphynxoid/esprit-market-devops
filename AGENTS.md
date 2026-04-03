@@ -217,6 +217,32 @@ Jenkins pipeline stages:
 
 ---
 
+## MCP Servers
+
+Configured in `opencode.json` at project root.
+
+| MCP | Type | Purpose |
+|-----|------|---------|
+| `context7` | Remote | Search Spring Boot, Angular, K8s docs |
+| `postgres` | Local | Query PostgreSQL directly (via `POSTGRES_CONNECTION_STRING`) |
+
+Use `use context7` in prompts to search documentation.
+
+---
+
+## Skills
+
+Located in `.opencode/skills/<name>/SKILL.md`. Load with the `skill` tool.
+
+| Skill | Purpose |
+|-------|---------|
+| `k8s-deploy` | Deploy/update app on Kubernetes |
+| `debug-k8s` | Diagnose K8s pod and deployment failures |
+| `generate-types` | Regenerate TypeScript types from OpenAPI spec |
+| `docker-ops` | Manage Docker Compose stacks |
+
+---
+
 ## File References
 
 When referencing files, use format: `path/to/file.ts:42` for line numbers.

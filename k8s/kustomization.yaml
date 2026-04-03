@@ -8,6 +8,7 @@ resources:
   - cert-issuer.yaml
   - backend/backend-configmap.yaml
   - backend/backend-secret.yaml
+  - backend/uploads-pvc.yaml
   - backend/postgres.yaml
   - backend/backend-deployment.yaml
   - backend/backend-service.yaml

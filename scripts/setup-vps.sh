@@ -74,6 +74,14 @@ echo "=== Installing local-path-provisioner for storage ==="
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
 kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
+echo ""
+echo "=== Setting up persistent storage for uploads ==="
+# Get the actual node hostname
+NODE_NAME=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+export KUBE_NODE_NAME=$NODE_NAME
+# Note: setup-storage.sh needs to be run from the devops directory
+# It will be run after git clone in the deployment instructions
+
 echo "=== Installing NGINX Ingress Controller ==="
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/baremetal/deploy.yaml
 
@@ -102,9 +110,10 @@ echo "=== Setup Complete! ==="
 echo ""
 echo "Next steps:"
 echo "1. Clone the repo: git clone https://github.com/your-repo/esprit-market.git"
-echo "2. cd esprit-market/devops"
-echo "3. Create secrets: ./scripts/create-secrets.sh"
-echo "4. Deploy: kubectl apply -k k8s/overlays/single-node/"
+echo "2. cd esprit-market"
+echo "3. Setup persistent storage: sudo ./devops/scripts/setup-storage.sh"
+echo "4. Create secrets: cd devops && ./scripts/create-secrets.sh"
+echo "5. Deploy: kubectl apply -k devops/k8s/overlays/single-node/"
 echo ""
 echo "To get the NodePort for ingress:"
 echo "  kubectl get svc -n ingress-nginx"

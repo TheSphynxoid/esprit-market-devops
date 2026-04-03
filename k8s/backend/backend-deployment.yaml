@@ -11,7 +11,7 @@ metadata:
     prometheus.io/port: "8088"
     prometheus.io/path: "/actuator/prometheus"
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -52,6 +52,8 @@ spec:
           env:
             - name: JAVA_OPTS
               value: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+            - name: APP_UPLOAD_DIR
+              value: "/app/uploads"
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -80,16 +82,23 @@ spec:
           resources:
             requests:
               cpu: 250m
-              memory: 512Mi
+              memory: 384Mi
             limits:
               cpu: 1
-              memory: 1Gi
+              memory: 768Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: esprit-market-uploads-pvc
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

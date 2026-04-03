@@ -7,7 +7,7 @@ metadata:
     app: esprit-market-frontend
     version: v1
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -27,10 +27,21 @@ spec:
         runAsNonRoot: true
         runAsUser: 1001
         fsGroup: 1001
+      initContainers:
+        - name: fix-nginx-perms
+          image: busybox:latest
+          command: ['sh', '-c', 'chmod -R 777 /var/lib/nginx 2>/dev/null || true']
+          volumeMounts:
+            - name: var-lib
+              mountPath: /var/lib
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
       containers:
         - name: frontend
           image: thesphynx2000/espritmarket-frontend:latest
           imagePullPolicy: Always
+          command: ['sh', '-c', 'mkdir -p /var/lib/nginx/logs && chmod 777 /var/lib/nginx/logs && nginx -g "daemon off;"']
           ports:
             - name: http
               containerPort: 8080
@@ -64,6 +75,8 @@ spec:
             capabilities:
               drop:
                 - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
           volumeMounts:
             - name: nginx-tmp
               mountPath: /tmp/nginx
@@ -72,6 +85,8 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+            - name: var-lib
+              mountPath: /var/lib
       volumes:
         - name: nginx-tmp
           emptyDir: {}
@@ -80,6 +95,8 @@ spec:
         - name: nginx-config
           configMap:
             name: frontend-config
+        - name: var-lib
+          emptyDir: {}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
