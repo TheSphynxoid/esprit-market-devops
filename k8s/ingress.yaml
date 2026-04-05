@@ -36,14 +36,7 @@ spec:
                 name: esprit-market-backend
                 port:
                   number: 8088
-          - path: /v3/api-docs
-            pathType: Prefix
-            backend:
-              service:
-                name: esprit-market-backend
-                port:
-                  number: 8088
-          - path: /swagger-ui
+          - path: /ws-marketplace
             pathType: Prefix
             backend:
               service:
