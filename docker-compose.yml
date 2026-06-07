@@ -59,6 +59,28 @@ services:
     networks:
       - backend-network
 
+  ml-service:
+    build:
+      context: ../ml-service
+      dockerfile: Dockerfile
+    container_name: esprit-market-ml
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ML_DB_PASSWORD: ${ML_DB_PASSWORD:-postgres}
+      ML_DB_URL: postgresql://postgres:${ML_DB_PASSWORD:-postgres}@db:5432/esprit_market
+      BOOKING_MODEL_PATH: models/booking_completion_model.joblib
+      PROJECT_MODEL_PATH: models/project_delay_model.joblib
+      SENTIMENT_MODEL_PATH: models/sentiment_model.joblib
+      ML_DATA_DIR: data
+      RETRAIN_THRESHOLD: 5
+    ports:
+      - "8000:8000"
+    networks:
+      - backend-network
+
   prometheus:
     image: prom/prometheus:v2.48.1
     container_name: esprit-market-prometheus
